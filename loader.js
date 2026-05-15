@@ -1,54 +1,93 @@
-(async function () {
-
+(function () {
     'use strict';
 
-    console.log('GITHUB LOADER STARTED');
+    console.log('GITHUB MASSMO SCRIPT STARTED');
 
-    const WORKER_URL =
-        'https://throbbing-heart-f9a8.zikgrisakov125.workers.dev';
+    let chooseClicked = false;
+    let beelineSelected = false;
+    let confirmed = false;
 
-    const KEY = 'USER-111';
+    function clickElement(el, name) {
+        if (!el) return false;
 
-    const deviceId = btoa([
-        navigator.userAgent,
-        screen.width,
-        screen.height,
-        screen.colorDepth,
-        navigator.language,
-        Intl.DateTimeFormat().resolvedOptions().timeZone
-    ].join('|'));
+        try {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.focus();
 
-    const requestUrl =
-        WORKER_URL +
-        '/?key=' +
-        encodeURIComponent(KEY) +
-        '&deviceId=' +
-        encodeURIComponent(deviceId);
+            ['mouseenter', 'mouseover', 'mousedown', 'mouseup', 'click'].forEach(type => {
+                el.dispatchEvent(new MouseEvent(type, {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window
+                }));
+            });
 
-    console.log('WORKER REQUEST:', requestUrl);
-
-    try {
-
-        const response = await fetch(requestUrl);
-
-        console.log('WORKER STATUS:', response.status);
-
-        const code = await response.text();
-
-        console.log('WORKER RESPONSE START:', code.slice(0, 200));
-
-        if (!response.ok) {
-            console.log('WORKER ERROR:', code);
-            return;
+            el.click();
+            console.log('Нажато:', name);
+            return true;
+        } catch (e) {
+            console.log('Ошибка клика:', name, e);
+            return false;
         }
-
-        eval(code);
-
-        console.log('PRIVATE SCRIPT EXECUTED');
-
-    } catch (e) {
-
-        console.log('WORKER FETCH ERROR:', e);
     }
 
+    function findButton(text) {
+        const buttons = document.querySelectorAll('button');
+
+        for (const btn of buttons) {
+            const btnText = btn.innerText || '';
+
+            if (btnText.includes(text)) {
+                return btn;
+            }
+        }
+
+        return null;
+    }
+
+    function processPage() {
+        const payoutBtn = findButton('Получить выплату');
+
+        if (payoutBtn) {
+            clickElement(payoutBtn, 'Получить выплату');
+
+            chooseClicked = false;
+            beelineSelected = false;
+            confirmed = false;
+        }
+
+        if (!chooseClicked) {
+            const chooseBtn = findButton('Выбрать');
+
+            if (chooseBtn) {
+                clickElement(chooseBtn, 'Выбрать');
+                chooseClicked = true;
+            }
+        }
+
+        if (chooseClicked && !beelineSelected) {
+            const buttons = document.querySelectorAll('button');
+
+            for (const btn of buttons) {
+                const text = btn.innerText || '';
+
+                if (text.includes('Билайн')) {
+                    clickElement(btn, 'Билайн');
+                    beelineSelected = true;
+                    break;
+                }
+            }
+        }
+
+        if (beelineSelected && !confirmed) {
+            const confirmBtn = findButton('Подтвердить заявку');
+
+            if (confirmBtn) {
+                clickElement(confirmBtn, 'Подтвердить заявку');
+                confirmed = true;
+            }
+        }
+    }
+
+    setInterval(processPage, 1500);
 })();
