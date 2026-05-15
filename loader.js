@@ -1,240 +1,203 @@
 (function () {
-    'use strict';
+'use strict';
 
-    alert('LOADER OK');
-
-    const LICENSES = {
-    'FRIEND-001': 'TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6MTUwLjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMTUwLjB8MTkyMHwxMDgwfDI0fHJ1LVJVfEV1cm9wZS9Nb3Njb3c=',
-    'FRIEND-002': '',
-    'FRIEND-003': '',
-    'FRIEND-004': '',
-    'FRIEND-005': '',
-    'FRIEND-006': '',
-    'FRIEND-007': '',
-    'FRIEND-008': '',
-    'FRIEND-009': '',
-    'FRIEND-010': '',
-    'FRIEND-011': '',
-    'FRIEND-012': '',
-    'FRIEND-013': '',
-    'FRIEND-014': '',
-    'FRIEND-015': '',
-    'FRIEND-016': '',
-    'FRIEND-017': '',
-    'FRIEND-018': '',
-    'FRIEND-019': '',
-    'FRIEND-020': '',
-    'FRIEND-021': '',
-    'FRIEND-022': '',
-    'FRIEND-023': '',
-    'FRIEND-024': '',
-    'FRIEND-025': '',
-    'FRIEND-026': '',
-    'FRIEND-027': '',
-    'FRIEND-028': '',
-    'FRIEND-029': '',
-    'FRIEND-030': '',
-    'FRIEND-031': '',
-    'FRIEND-032': '',
-    'FRIEND-033': '',
-    'FRIEND-034': '',
-    'FRIEND-035': '',
-    'FRIEND-036': '',
-    'FRIEND-037': '',
-    'FRIEND-038': '',
-    'FRIEND-039': '',
-    'FRIEND-040': ''
+const LICENSES = {
+'FRIEND-001':'TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6MTUwLjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMTUwLjB8MTkyMHwxMDgwfDI0fHJ1LVJVfEV1cm9wZS9Nb3Njb3c=',
+'FRIEND-002':'',
+'FRIEND-003':'',
+'FRIEND-004':'',
+'FRIEND-005':'',
+'FRIEND-006':'',
+'FRIEND-007':'',
+'FRIEND-008':'',
+'FRIEND-009':'',
+'FRIEND-010':'',
+'FRIEND-011':'',
+'FRIEND-012':'',
+'FRIEND-013':'',
+'FRIEND-014':'',
+'FRIEND-015':'',
+'FRIEND-016':'',
+'FRIEND-017':'',
+'FRIEND-018':'',
+'FRIEND-019':'',
+'FRIEND-020':'',
+'FRIEND-021':'',
+'FRIEND-022':'',
+'FRIEND-023':'',
+'FRIEND-024':'',
+'FRIEND-025':'',
+'FRIEND-026':'',
+'FRIEND-027':'',
+'FRIEND-028':'',
+'FRIEND-029':'',
+'FRIEND-030':'',
+'FRIEND-031':'',
+'FRIEND-032':'',
+'FRIEND-033':'',
+'FRIEND-034':'',
+'FRIEND-035':'',
+'FRIEND-036':'',
+'FRIEND-037':'',
+'FRIEND-038':'',
+'FRIEND-039':'',
+'FRIEND-040':''
 };
 
-    const STORAGE_KEY = 'massmo_saved_key';
+const STORAGE_KEY='massmo_saved_key';
 
-    function getDeviceId() {
-        return btoa([
-            navigator.userAgent,
-            screen.width,
-            screen.height,
-            screen.colorDepth,
-            navigator.language,
-            Intl.DateTimeFormat().resolvedOptions().timeZone
-        ].join('|'));
-    }
+function getDeviceId(){
+return btoa([
+navigator.userAgent,
+screen.width,
+screen.height,
+screen.colorDepth,
+navigator.language,
+Intl.DateTimeFormat().resolvedOptions().timeZone
+].join('|'));
+}
 
-    function startBot() {
-        console.log('SCRIPT STARTED');
+function startBot(){
+console.log('SCRIPT STARTED');
 
-        function clickElement(el, name) {
-            if (!el) return false;
+let confirmed=false;
 
-            try {
-                el.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
+function clickElement(el,name){
+if(!el)return false;
+try{
+el.scrollIntoView({behavior:'smooth',block:'center'});
+el.focus();
 
-                el.focus();
+['mouseenter','mouseover','mousedown','mouseup','click'].forEach(function(type){
+el.dispatchEvent(new MouseEvent(type,{
+bubbles:true,
+cancelable:true,
+view:window
+}));
+});
 
-                [
-                    'mouseenter',
-                    'mouseover',
-                    'mousedown',
-                    'mouseup',
-                    'click'
-                ].forEach(type => {
-                    el.dispatchEvent(new MouseEvent(type, {
-                        bubbles: true,
-                        cancelable: true,
-                        view: window
-                    }));
-                });
+el.click();
+console.log('Нажато:',name);
+return true;
+}catch(e){
+console.log('Ошибка:',e);
+return false;
+}
+}
 
-                el.click();
+function findButton(text){
+const buttons=document.querySelectorAll('button');
 
-                console.log('Нажато:', name);
+for(const btn of buttons){
+const btnText=btn.innerText||'';
+if(btnText.includes(text)){
+return btn;
+}
+}
 
-                return true;
+return null;
+}
 
-            } catch (e) {
+function processPage(){
 
-                console.log('Ошибка:', e);
+const payoutBtn=findButton('Получить выплату');
 
-                return false;
-            }
-        }
+if(payoutBtn){
+clickElement(payoutBtn,'Получить выплату');
+confirmed=false;
+}
 
-        function findButton(text) {
-            const buttons = document.querySelectorAll('button');
+const chooseBtn=findButton('Выбрать');
 
-            for (const btn of buttons) {
-                const btnText = btn.innerText || '';
+if(chooseBtn){
+clickElement(chooseBtn,'Выбрать');
+}
 
-                if (btnText.includes(text)) {
-                    return btn;
-                }
-            }
+const allButtons=document.querySelectorAll('button');
 
-            return null;
-        }
+for(const btn of allButtons){
+const text=btn.innerText||'';
 
-        function processPage() {
-            const payoutBtn = findButton('Получить выплату');
+if(text.includes('Билайн')){
+clickElement(btn,'Билайн');
+break;
+}
+}
 
-            if (payoutBtn) {
-                clickElement(payoutBtn, 'Получить выплату');
-            }
+const confirmBtn=findButton('Подтвердить заявку');
 
-            const chooseBtn = findButton('Выбрать');
+if(confirmBtn&&!confirmed){
+clickElement(confirmBtn,'Подтвердить заявку');
+confirmed=true;
+}
+}
 
-            if (chooseBtn) {
-                clickElement(chooseBtn, 'Выбрать');
-            }
+setInterval(processPage,1500);
+}
 
-            const allButtons = document.querySelectorAll('button');
+function validateKey(key){
+const deviceId=getDeviceId();
 
-            for (const btn of allButtons) {
-                const text = btn.innerText || '';
+if(!(key in LICENSES)){
+alert('Неверный ключ');
+return false;
+}
 
-                if (text.includes('Билайн')) {
-                    clickElement(btn, 'Билайн');
-                    break;
-                }
-            }
+if(!LICENSES[key]){
+alert('Ключ ещё не привязан.\n\nОтправь владельцу этот DEVICE ID:\n\n'+deviceId);
+console.log('DEVICE ID:',deviceId);
+return false;
+}
 
-            const confirmBtn = findButton('Подтвердить заявку');
+if(LICENSES[key]!==deviceId){
+alert('Этот ключ привязан к другому ПК');
+console.log('CURRENT DEVICE ID:',deviceId);
+return false;
+}
 
-            if (confirmBtn) {
-                clickElement(confirmBtn, 'Подтвердить заявку');
-            }
-        }
+localStorage.setItem(STORAGE_KEY,key);
+console.log('ACCESS GRANTED');
+return true;
+}
 
-        setInterval(processPage, 1500);
-    }
+function showKeyBox(){
+if(!document.body){
+setTimeout(showKeyBox,500);
+return;
+}
 
-    function validateKey(key) {
-        const deviceId = getDeviceId();
+const box=document.createElement('div');
 
-        if (!(key in LICENSES)) {
-            alert('Неверный ключ');
-            return false;
-        }
+box.style='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999999999;background:#111;color:#fff;padding:20px;border-radius:12px;font-family:Arial;box-shadow:0 0 20px #000;';
 
-        if (!LICENSES[key]) {
-            alert(
-                'Этот ключ ещё не привязан.\n\n' +
-                'Отправь владельцу этот DEVICE ID:\n\n' +
-                deviceId
-            );
+box.innerHTML=
+'<div style="font-size:18px;margin-bottom:10px;">Введите ключ доступа</div>'+
+'<input id="keyBox" placeholder="FRIEND-001" style="padding:10px;width:220px;">'+
+'<button id="keyBtn" style="padding:10px;margin-left:8px;">OK</button>';
 
-            console.log('DEVICE ID:', deviceId);
+document.body.appendChild(box);
 
-            return false;
-        }
+document.getElementById('keyBtn').onclick=function(){
+const key=document.getElementById('keyBox').value.trim();
 
-        if (LICENSES[key] !== deviceId) {
-            alert('Этот ключ привязан к другому ПК');
-            console.log('CURRENT DEVICE ID:', deviceId);
-            return false;
-        }
+if(!validateKey(key))return;
 
-        localStorage.setItem(STORAGE_KEY, key);
+box.remove();
+startBot();
+};
+}
 
-        alert('Доступ разрешён');
+const savedKey=localStorage.getItem(STORAGE_KEY);
 
-        console.log('ACCESS GRANTED');
-
-        return true;
-    }
-
-    function showKeyBox() {
-        if (!document.body) {
-            setTimeout(showKeyBox, 500);
-            return;
-        }
-
-        const box = document.createElement('div');
-
-        box.style =
-            'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
-            'z-index:999999999;background:#111;color:#fff;padding:20px;' +
-            'border-radius:12px;font-family:Arial;box-shadow:0 0 20px #000;';
-
-        box.innerHTML =
-            '<div style="font-size:18px;margin-bottom:10px;">Введите ключ доступа</div>' +
-
-
-'<input id="keyBox" placeholder="FRIEND-001" style="padding:10px;width:220px;">' +
-            '<button id="keyBtn" style="padding:10px;margin-left:8px;">OK</button>';
-
-        document.body.appendChild(box);
-
-        document.getElementById('keyBtn').onclick = function () {
-            const key = document.getElementById('keyBox').value.trim();
-
-            if (!validateKey(key)) return;
-
-            box.remove();
-
-            startBot();
-        };
-    }
-
-    const savedKey = localStorage.getItem(STORAGE_KEY);
-
-    if (savedKey) {
-
-        if (validateKey(savedKey)) {
-
-            startBot();
-
-        } else {
-
-            localStorage.removeItem(STORAGE_KEY);
-
-            showKeyBox();
-        }
-
-    } else {
-
-        showKeyBox();
-    }
+if(savedKey){
+if(validateKey(savedKey)){
+startBot();
+}else{
+localStorage.removeItem(STORAGE_KEY);
+showKeyBox();
+}
+}else{
+showKeyBox();
+}
 
 })();
