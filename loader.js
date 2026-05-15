@@ -4,8 +4,47 @@
     alert('LOADER OK');
 
     const LICENSES = {
-        'FRIEND-001': 'TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6MTUwLjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMTUwLjB8MTkyMHwxMDgwfDI0fHJ1LVJVfEV1cm9wZS9Nb3Njb3c='
-    };
+    'FRIEND-001': '',
+    'FRIEND-002': '',
+    'FRIEND-003': '',
+    'FRIEND-004': '',
+    'FRIEND-005': '',
+    'FRIEND-006': '',
+    'FRIEND-007': '',
+    'FRIEND-008': '',
+    'FRIEND-009': '',
+    'FRIEND-010': '',
+    'FRIEND-011': '',
+    'FRIEND-012': '',
+    'FRIEND-013': '',
+    'FRIEND-014': '',
+    'FRIEND-015': '',
+    'FRIEND-016': '',
+    'FRIEND-017': '',
+    'FRIEND-018': '',
+    'FRIEND-019': '',
+    'FRIEND-020': '',
+    'FRIEND-021': '',
+    'FRIEND-022': '',
+    'FRIEND-023': '',
+    'FRIEND-024': '',
+    'FRIEND-025': '',
+    'FRIEND-026': '',
+    'FRIEND-027': '',
+    'FRIEND-028': '',
+    'FRIEND-029': '',
+    'FRIEND-030': '',
+    'FRIEND-031': '',
+    'FRIEND-032': '',
+    'FRIEND-033': '',
+    'FRIEND-034': '',
+    'FRIEND-035': '',
+    'FRIEND-036': '',
+    'FRIEND-037': '',
+    'FRIEND-038': '',
+    'FRIEND-039': '',
+    'FRIEND-040': ''
+};
 
     const STORAGE_KEY = 'massmo_saved_key';
 
