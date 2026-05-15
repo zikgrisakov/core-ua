@@ -5,17 +5,10 @@
 
     const box = document.createElement('div');
     box.style = `
-        position: fixed;
-        z-index: 999999;
-        top: 50%;
-        left: 50%;
+        position: fixed; z-index: 999999; top: 50%; left: 50%;
         transform: translate(-50%, -50%);
-        background: #111;
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        font-family: Arial;
-        box-shadow: 0 0 20px #000;
+        background: #111; color: white; padding: 20px;
+        border-radius: 12px; font-family: Arial; box-shadow: 0 0 20px #000;
     `;
 
     box.innerHTML = `
@@ -27,7 +20,6 @@
     document.body.appendChild(box);
 
     document.getElementById('massmoKeyBtn').onclick = function () {
-
         const key = document.getElementById('massmoKeyInput').value.trim();
 
         if (key !== 'USER-111') {
@@ -36,67 +28,57 @@
         }
 
         box.remove();
-
         console.log('ACCESS GRANTED');
+        startBot();
+    };
 
+    function startBot() {
         let chooseClicked = false;
         let beelineSelected = false;
         let confirmed = false;
 
         function clickElement(el, name) {
-
             if (!el) return false;
 
             try {
-
-                el.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 el.focus();
 
-                [
-                    'mouseenter',
-                    'mouseover',
-                    'mousedown',
-                    'mouseup',
-                    'click'
-                ].forEach(type => {
-
+                ['mouseenter', 'mouseover', 'mousedown', 'mouseup', 'click'].forEach(type => {
                     el.dispatchEvent(new MouseEvent(type, {
                         bubbles: true,
                         cancelable: true,
                         view: window
                     }));
-
                 });
 
                 el.click();
-
                 console.log('Нажато:', name);
-
                 return true;
-
             } catch (e) {
-
                 console.log('Ошибка клика:', name, e);
-
                 return false;
             }
         }
 
-        function findButton(text) {
+        function getText(el) {
+            return (el.innerText  el.textContent  '').trim();
+        }
 
-            const buttons = document.querySelectorAll('button');
+        function findClickableByText(text) {
+            const elements = document.querySelectorAll('button, div, span, a, [role="button"]');
 
-            for (const btn of buttons) {
+            for (const el of elements) {
+                const elText = getText(el);
 
-                const btnText = btn.innerText || '';
+                if (elText.includes(text)) {
+                    const clickable =
+                        el.closest('button') ||
+                        el.closest('[role="button"]') ||
+                        el.closest('a') ||
+                        el;
 
-                if (btnText.includes(text)) {
-
-                    return btn;
+                    return clickable;
                 }
             }
 
@@ -104,11 +86,11 @@
         }
 
         function processPage() {
+            console.log('BOT CHECK');
 
-            const payoutBtn = findButton('Получить выплату');
+            const payoutBtn = findClickableByText('Получить выплату');
 
             if (payoutBtn) {
-
                 clickElement(payoutBtn, 'Получить выплату');
 
                 chooseClicked = false;
@@ -117,51 +99,34 @@
             }
 
             if (!chooseClicked) {
-
-                const chooseBtn = findButton('Выбрать');
+                const chooseBtn = findClickableByText('Выбрать');
 
                 if (chooseBtn) {
-
                     clickElement(chooseBtn, 'Выбрать');
-
                     chooseClicked = true;
                 }
             }
 
             if (chooseClicked && !beelineSelected) {
+                const beelineBtn = findClickableByText('Билайн');
 
-                const buttons = document.querySelectorAll('button');
-
-                for (const btn of buttons) {
-
-                    const text = btn.innerText || '';
-
-                    if (text.includes('Билайн')) {
-
-                        clickElement(btn, 'Билайн');
-
-                        beelineSelected = true;
-
-                        break;
-                    }
+                if (beelineBtn) {
+                    clickElement(beelineBtn, 'Билайн');
+                    beelineSelected = true;
                 }
             }
 
             if (beelineSelected && !confirmed) {
-
-                const confirmBtn = findButton('Подтвердить заявку');
+                const confirmBtn = findClickableByText('Подтвердить заявку');
 
                 if (confirmBtn) {
-
                     clickElement(confirmBtn, 'Подтвердить заявку');
-
                     confirmed = true;
                 }
             }
         }
 
+        processPage();
         setInterval(processPage, 1500);
-    };
-
+    }
 })();
- 
