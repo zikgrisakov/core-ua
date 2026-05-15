@@ -10,3 +10,5 @@
 
     alert('Ключ принят, бот готов к запуску');
     console.log('ACCESS GRANTED');
+
+})();
