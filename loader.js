@@ -27,9 +27,52 @@
 
             alert('Ключ принят');
             console.log('ACCESS GRANTED');
+
             box.remove();
+
+            startBot();
         };
     }
 
+    function startBot() {
+        console.log('BOT STARTED');
+
+        function clickByText(text) {
+            const els = document.querySelectorAll('button, div, span, a, [role="button"]');
+
+            for (const el of els) {
+                const t = (el.innerText  el.textContent  '').trim();
+
+                if (t.includes(text)) {
+                    el.click();
+                    console.log('CLICK:', text);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function run() {
+            console.log('BOT CHECK');
+
+            if (clickByText('Получить выплату')) return;
+            if (clickByText('Выбрать')) return;
+            if (clickByText('Билайн')) return;
+            if (clickByText('Подтвердить заявку')) return;
+        }
+
+        run();
+
+        setInterval(function () {
+            try {
+                run();
+            } catch (e) {
+                console.log('BOT ERROR:', e);
+            }
+        }, 1500);
+    }
+
     showKeyBox();
+
 })();
