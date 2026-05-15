@@ -1,3 +1,4 @@
+console.log('TEST CHANGE');
 (async function () {
 
     'use strict';
