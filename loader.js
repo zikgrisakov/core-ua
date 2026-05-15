@@ -1,4 +1,3 @@
-console.log('TEST CHANGE');
 (async function () {
 
     'use strict';
@@ -19,22 +18,27 @@ console.log('TEST CHANGE');
         Intl.DateTimeFormat().resolvedOptions().timeZone
     ].join('|'));
 
+    const requestUrl =
+        WORKER_URL +
+        '/?key=' +
+        encodeURIComponent(KEY) +
+        '&deviceId=' +
+        encodeURIComponent(deviceId);
+
+    console.log('WORKER REQUEST:', requestUrl);
+
     try {
 
-        const response = await fetch(
-            WORKER_URL +
-            '/?key=' +
-            encodeURIComponent(KEY) +
-            '&deviceId=' +
-            encodeURIComponent(deviceId)
-        );
+        const response = await fetch(requestUrl);
+
+        console.log('WORKER STATUS:', response.status);
 
         const code = await response.text();
 
+        console.log('WORKER RESPONSE START:', code.slice(0, 200));
+
         if (!response.ok) {
-
             console.log('WORKER ERROR:', code);
-
             return;
         }
 
@@ -44,8 +48,7 @@ console.log('TEST CHANGE');
 
     } catch (e) {
 
-        console.log('GITHUB LOADER ERROR:', e);
-
+        console.log('WORKER FETCH ERROR:', e);
     }
 
 })();
