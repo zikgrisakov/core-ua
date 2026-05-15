@@ -4,7 +4,7 @@
     alert('LOADER OK');
 
     const LICENSES = {
-        'FRIEND-001': ''
+        'FRIEND-001': 'TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6MTUwLjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMTUwLjB8MTkyMHwxMDgwfDI0fHJ1LVJVfEV1cm9wZS9Nb3Njb3c='
     };
 
     const STORAGE_KEY = 'massmo_saved_key';
