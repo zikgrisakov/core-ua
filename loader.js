@@ -194,7 +194,6 @@
             }
         }
 
-> RA:
 if (beelineSelected && !confirmed) {
 
             const confirmBtn = findButton('Подтвердить заявку');
