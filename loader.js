@@ -31,6 +31,23 @@ Intl.DateTimeFormat().resolvedOptions().timeZone
 function startBot(){
 console.log('SCRIPT STARTED');
 
+  function checkErrors(){
+const pageText=document.body ? document.body.innerText || '' : '';
+
+if(
+pageText.includes('"status":"FETCH_ERROR"') ||
+pageText.includes('FETCH_ERROR') ||
+pageText.includes('NetworkError when attempting to fetch resource')
+){
+console.log('FETCH ERROR DETECTED -> RELOAD');
+
+setTimeout(function(){
+location.reload();
+},2000);
+}
+}
+
+setInterval(checkErrors,3000);
 let confirmed=false;
 let chosen=false;
 let beelineSelected=false;
