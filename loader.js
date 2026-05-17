@@ -1,134 +1,31 @@
-const SUPABASE_URL = 'https://tuozemcmikaxdxxdorzk.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1b3plbWNtaWtheGR4eGRvcnprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NzY2NzAsImV4cCI6MjA5NDU1MjY3MH0.MY04aQQIxrVzYBGLVs0vTanJ6sIr3KPRljYqhR_yxg8';
-
-const API_URL = SUPABASE_URL + '/rest/v1/licenses';
-
-async function loadKeys() {
-  const res = await fetch(API_URL + '?select=*', {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: 'Bearer ' + SUPABASE_ANON_KEY
-    }
-  });
-
-  const data = await res.json();
-  const table = document.getElementById('keysTable');
-  table.innerHTML = '';
-
-  data.forEach(function(item) {
-    const row = document.createElement('tr');
-
-    row.innerHTML =
-      '<td>' + item.license_key + '</td>' +
-      '<td>' + (item.device_id || 'не привязан') + '</td>' +
-      '<td>' + item.status + '</td>' +
-      '<td>' +
-      '<button onclick="banKey(\'' + item.license_key + '\')">Бан</button> ' +
-      '<button onclick="unbanKey(\'' + item.license_key + '\')">Разбан</button> ' +
-      '<button onclick="resetDevice(\'' + item.license_key + '\')">Сбросить ПК</button>' +
-      '</td>';
-
-    table.appendChild(row);
-  });
-}
-
-async function addKey() {
-  const key = document.getElementById('keyInput').value.trim();
-
-  if (!key) {
-    alert('Введите ключ');
-    return;
-  }
-
-  await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      license_key: key,
-      device_id: null,
-      status: 'active'
-    })
-  });
-
-  document.getElementById('keyInput').value = '';
-  loadKeys();
-}
-
-async function updateKey(key, data) {
-  await fetch(API_URL + '?license_key=eq.' + encodeURIComponent(key), {
-    method: 'PATCH',
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
-
-  loadKeys();
-}
-
-function banKey(key) {
-  updateKey(key, { status: 'banned' });
-}
-
-function unbanKey(key) {
-  updateKey(key, { status: 'active' });
-}
-
-function resetDevice(key) {
-  updateKey(key, { device_id: null });
-}
-
-loadKeys();
-
 (function () {
 'use strict';
 
-const SUPABASE_URL='https://tuozemcmikaxdxxdorzk.supabase.co';
-const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1b3plbWNtaWtheGR4eGRvcnprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NzY2NzAsImV4cCI6MjA5NDU1MjY3MH0.MY04aQQIxrVzYBGLVs0vTanJ6sIr3KPRljYqhR_yxg8';
+const LICENSES = {
+'FRIEND-001':'TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6MTUwLjApIEdlY2tvLzIwMTAwMTAxIEZpcmVmb3gvMTUwLjB8MTkyMHwxMDgwfDI0fHJ1LVJVfEV1cm9wZS9Nb3Njb3c=',
+'FRIEND-002':'','FRIEND-003':'','FRIEND-004':'','FRIEND-005':'',
+'FRIEND-006':'','FRIEND-007':'','FRIEND-008':'','FRIEND-009':'',
+'FRIEND-010':'','FRIEND-011':'','FRIEND-012':'','FRIEND-013':'',
+'FRIEND-014':'','FRIEND-015':'','FRIEND-016':'','FRIEND-017':'',
+'FRIEND-018':'','FRIEND-019':'','FRIEND-020':'','FRIEND-021':'',
+'FRIEND-022':'','FRIEND-023':'','FRIEND-024':'','FRIEND-025':'',
+'FRIEND-026':'','FRIEND-027':'','FRIEND-028':'','FRIEND-029':'',
+'FRIEND-030':'','FRIEND-031':'','FRIEND-032':'','FRIEND-033':'',
+'FRIEND-034':'','FRIEND-035':'','FRIEND-036':'','FRIEND-037':'',
+'FRIEND-038':'','FRIEND-039':'','FRIEND-040':''
+};
+
 const STORAGE_KEY='massmo_saved_key';
 
-function askKey(){
-let saved=localStorage.getItem(STORAGE_KEY);
-if(saved)return saved;
-let key=prompt('Введите ключ доступа');
-if(key)localStorage.setItem(STORAGE_KEY,key);
-return key;
-}
-
-async function checkKey(key){
-const url=SUPABASE_URL+'/rest/v1/licenses?license_key=eq.'+encodeURIComponent(key)+'&select=*';
-
-const res=await fetch(url,{
-headers:{
-apikey:SUPABASE_ANON_KEY,
-Authorization:'Bearer '+SUPABASE_ANON_KEY
-}
-});
-
-const data=await res.json();
-
-if(!data.length){
-alert('Ключ не найден');
-localStorage.removeItem(STORAGE_KEY);
-return false;
-}
-
-const license=data[0];
-
-if(license.status!=='active'){
-alert('Ключ отключён');
-localStorage.removeItem(STORAGE_KEY);
-return false;
-}
-
-console.log('ACCESS GRANTED:',key);
-return true;
+function getDeviceId(){
+return btoa([
+navigator.userAgent,
+screen.width,
+screen.height,
+screen.colorDepth,
+navigator.language,
+Intl.DateTimeFormat().resolvedOptions().timeZone
+].join('|'));
 }
 
 function startBot(){
@@ -143,15 +40,9 @@ if(!el)return false;
 try{
 el.scrollIntoView({behavior:'smooth',block:'center'});
 el.focus();
-
 ['mouseenter','mouseover','mousedown','mouseup','click'].forEach(function(type){
-el.dispatchEvent(new MouseEvent(type,{
-bubbles:true,
-cancelable:true,
-view:window
-}));
+el.dispatchEvent(new MouseEvent(type,{bubbles:true,cancelable:true,view:window}));
 });
-
 el.click();
 console.log('Нажато:',name);
 return true;
@@ -163,16 +54,24 @@ return false;
 
 function findButton(text){
 const buttons=document.querySelectorAll('button');
-for(const btn of buttons){
-const btnText=btn.innerText||'';
-if(btnText.includes(text))return btn;
-}
+ for(const btn of buttons){
+  const btnText=btn.innerText||'';
+  if(btnText.includes(text))return btn;
+ }
 return null;
 }
 
+function checkErrors(){
+const pageText=document.body ? document.body.innerText || '' : '';
+if(pageText.includes('"status":"FETCH_ERROR"')||pageText.includes('FETCH_ERROR')||pageText.includes('NetworkError when attempting to fetch resource')){
+console.log('FETCH ERROR DETECTED -> RELOAD');
+setTimeout(function(){location.reload();},2000);
+}
+}
+setInterval(checkErrors,3000);
+
 function processPage(){
 const payoutBtn=findButton('Получить выплату');
-
 if(payoutBtn){
 clickElement(payoutBtn,'Получить выплату');
 confirmed=false;
@@ -181,7 +80,6 @@ beelineSelected=false;
 }
 
 const chooseBtn=findButton('Выбрать');
-
 if(chooseBtn&&!chosen){
 clickElement(chooseBtn,'Выбрать');
 chosen=true;
@@ -200,7 +98,6 @@ break;
 }
 
 const confirmBtn=findButton('Подтвердить заявку');
-
 if(confirmBtn&&beelineSelected&&!confirmed){
 clickElement(confirmBtn,'Подтвердить заявку');
 confirmed=true;
@@ -210,27 +107,63 @@ confirmed=true;
 setInterval(processPage,1500);
 }
 
-(async function(){
-const key=askKey();
+function validateKey(key){
+const deviceId=getDeviceId();
 
-if(!key){
-alert('Ключ не введён');
+if(!(key in LICENSES)){
+alert('Неверный ключ');
+return false;
+}
+
+if(!LICENSES[key]){
+alert('Ключ ещё не привязан.\n\nОтправь владельцу этот DEVICE ID:\n\n'+deviceId);
+console.log('DEVICE ID:',deviceId);
+return false;
+}
+
+if(LICENSES[key]!==deviceId){
+alert('Этот ключ привязан к другому ПК');
+console.log('CURRENT DEVICE ID:',deviceId);
+return false;
+}
+
+localStorage.setItem(STORAGE_KEY,key);
+console.log('ACCESS GRANTED');
+return true;
+}
+
+function showKeyBox(){
+if(!document.body){
+setTimeout(showKeyBox,500);
 return;
 }
 
-let ok=false;
+const box=document.createElement('div');
+box.style='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999999999;background:#111;color:#fff;padding:20px;border-radius:12px;font-family:Arial;box-shadow:0 0 20px #000;';
+box.innerHTML='<div style="font-size:18px;margin-bottom:10px;">Введите ключ доступа</div><input id="keyBox" placeholder="FRIEND-001" style="padding:10px;width:220px;"><button id="keyBtn" style="padding:10px;margin-left:8px;">OK</button>';
+document.body.appendChild(box);
 
-try{
-ok=await checkKey(key);
-}catch(e){
-console.log('SUPABASE CHECK ERROR:',e);
-alert('Ошибка подключения к панели. Попробуй обновить страницу.');
-return;
+document.getElementById('keyBtn').onclick=function(){
+const key=document.
+
+getElementById('keyBox').value.trim();
+if(!validateKey(key))return;
+box.remove();
+startBot();
+};
 }
 
-if(ok)startBot();
+const savedKey=localStorage.getItem(STORAGE_KEY);
 
-if(ok)startBot();
-})();
+if(savedKey){
+if(validateKey(savedKey)){
+startBot();
+}else{
+localStorage.removeItem(STORAGE_KEY);
+showKeyBox();
+}
+}else{
+showKeyBox();
+}
 
 })();
