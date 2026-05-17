@@ -218,7 +218,17 @@ alert('Ключ не введён');
 return;
 }
 
-const ok=await checkKey(key);
+let ok=false;
+
+try{
+ok=await checkKey(key);
+}catch(e){
+console.log('SUPABASE CHECK ERROR:',e);
+alert('Ошибка подключения к панели. Попробуй обновить страницу.');
+return;
+}
+
+if(ok)startBot();
 
 if(ok)startBot();
 })();
