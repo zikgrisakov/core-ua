@@ -34,6 +34,7 @@ console.log('SCRIPT STARTED');
 let confirmed=false;
 let chosen=false;
 let beelineSelected=false;
+let confirmAttempts=0;
 
 function clickElement(el,name){
 if(!el)return false;
