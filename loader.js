@@ -71,6 +71,21 @@ setTimeout(function(){location.reload();},2000);
 setInterval(checkErrors,3000);
 
 function processPage(){
+ // ===== PAYOUTER DISABLED CHECK =====
+    const payouterDisabled = [...document.querySelectorAll('body *')]
+      .find(el => el.innerText && el.innerText.includes('Payouter: is disabled'));
+
+    if (payouterDisabled) {
+        console.log('PAYOUTER DISABLED DETECTED → RELOAD');
+
+        if (!window.lastReload || Date.now() - window.lastReload > 10000) {
+            window.lastReload = Date.now();
+            location.reload();
+        }
+
+        return;
+    }
+    // ===== END PAYOUTER CHECK =====
 const payoutBtn=findButton('Получить выплату');
 if(payoutBtn){
 clickElement(payoutBtn,'Получить выплату');
