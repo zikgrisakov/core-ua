@@ -114,9 +114,29 @@ break;
 }
 
 const confirmBtn=findButton('Подтвердить заявку');
-if(confirmBtn&&beelineSelected&&!confirmed){
-clickElement(confirmBtn,'Подтвердить заявку');
-confirmed=true;
+
+const checkingPayment = document.body.innerText.includes('Проверяем ваш платеж');
+
+if(checkingPayment){
+    confirmed = true;
+    console.log('Проверяем ваш платеж → подтверждено');
+}
+
+if(confirmBtn && beelineSelected && !confirmed && confirmAttempts < 10){
+    if(!window.lastConfirmClick || Date.now() - window.lastConfirmClick > 5000){
+        window.lastConfirmClick = Date.now();
+
+        clickElement(confirmBtn,'Подтвердить заявку');
+
+        confirmAttempts++;
+
+        console.log('Попытка подтверждения:', confirmAttempts);
+    }
+}
+
+if(confirmAttempts >= 10){
+    confirmed = true;
+    console.log('Лимит попыток подтверждения достигнут');
 }
 }
 
