@@ -87,6 +87,23 @@ function processPage(){
         return;
     }
     // ===== END PAYOUTER CHECK =====
+ // ===== NEW REQUEST CHECK =====
+const newRequestBtn = findButton('Перейти к новой заявке');
+
+if(newRequestBtn){
+
+    clickElement(newRequestBtn,'Перейти к новой заявке');
+
+    confirmed=false;
+    chosen=false;
+    beelineSelected=false;
+    confirmAttempts=0;
+
+    console.log('Новая заявка → состояние сброшено');
+
+    return;
+}
+// ===== END NEW REQUEST CHECK =====
 const payoutBtn=findButton('Получить выплату');
 if(payoutBtn){
 clickElement(payoutBtn,'Получить выплату');
