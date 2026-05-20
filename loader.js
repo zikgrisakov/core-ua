@@ -72,21 +72,23 @@ setTimeout(function(){location.reload();},2000);
 setInterval(checkErrors,3000);
 
 function processPage(){
- // ===== PAYOUTER DISABLED CHECK =====
-    const payouterDisabled = [...document.querySelectorAll('body *')]
-      .find(el => el.innerText && el.innerText.includes('Payouter: is disabled'));
+// ===== PAYOUTER DISABLED CHECK =====
+const pageText = document.body ? document.body.innerText || '' : '';
 
-    if (payouterDisabled) {
-        console.log('PAYOUTER DISABLED DETECTED → RELOAD');
+if (
+    pageText.includes('Payouter: is disabled') ||
+    pageText.includes('Payout Order_state: must be completed, canceled or expired')
+) {
+    console.log('PAYOUT ERROR DETECTED → RELOAD');
 
-        if (!window.lastReload || Date.now() - window.lastReload > 10000) {
-            window.lastReload = Date.now();
-            location.reload();
-        }
-
-        return;
+    if (!window.lastReload || Date.now() - window.lastReload > 10000) {
+        window.lastReload = Date.now();
+        location.reload();
     }
-    // ===== END PAYOUTER CHECK =====
+
+    return;
+}
+// ===== END PAYOUTER CHECK =====
  // ===== NEW REQUEST CHECK =====
 const newRequestBtn = findButton('Перейти к новой заявке');
 
